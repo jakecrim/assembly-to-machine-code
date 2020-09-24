@@ -1,3 +1,4 @@
+
 .text
 .globl main
 main:
@@ -62,4 +63,5 @@ syscall
 array: .word 0,0,0,0,0,0,0,0,0,0
 print: .asciiz "\nthe sorted array : "
 space: .asciiz " "
+
 

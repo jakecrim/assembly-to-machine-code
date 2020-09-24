@@ -15,7 +15,7 @@ void handle_instruction(char ** parsedLine)
 
 	/* Identify The Instruction */
 
-	// first I-type
+	// I-type
 	if(strcmp(parsedLine[0], "addiu") == 0)
 	{
 		printf("ADDIU \n");
@@ -40,6 +40,15 @@ void handle_instruction(char ** parsedLine)
 		hexRep = hexRep | 0x00000000;
 		// printf("HexRep: 0x%08X \n", hexRep);
 	}
+
+	// J-type
+
+	// R-type
+
+	/* Identify rt register */
+
+	/* Identify rs register */
+
 }
 
 int main(void)
