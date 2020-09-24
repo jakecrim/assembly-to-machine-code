@@ -1,6 +1,6 @@
-lab2: lab2.c
+mipsToHex: mipsToHex.c
 	gcc -Wall -g -O2 $^ -o $@
 
 .PHONY: clean
 clean:
-	rm -rf *.o *~ lab2 
+	rm -rf *.o *~ mipsToHex 
