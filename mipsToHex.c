@@ -6,12 +6,40 @@
 
 
 
-void handle_instruction()
+void handle_instruction(char ** parsedLine)
 {
+	uint32_t hexRep = 0x00000000; // hex representation
 	// *MAY DO READING AND PARSING RIGHT HERE*
 
-	// assuming the instruciton is read in from memory and parsed at this point
-	// switch(parsed_line)
+	// *Assuming the instruciton is read in from memory and parsed at this point *
+
+	/* Identify The Instruction */
+
+	// first I-type
+	if(strcmp(parsedLine[0], "addiu") == 0)
+	{
+		printf("ADDIU \n");
+		hexRep = hexRep | 0x24000000;
+		// printf("HexRep: 0x%08X \n", hexRep);
+	}
+	else if(strcmp(parsedLine[0], "addi") == 0)
+	{
+		printf("ADDI \n");
+		hexRep = hexRep | 0x20000000;
+		// printf("HexRep: 0x%08X \n", hexRep);
+	}
+	else if(strcmp(parsedLine[0], "andi") == 0)
+	{
+		printf("ANDI \n");
+		hexRep = hexRep | 0x30000000;
+		// printf("HexRep: 0x%08X \n", hexRep);
+	}
+	else if(strcmp(parsedLine[0], "") == 0)
+	{
+		printf(" \n");
+		hexRep = hexRep | 0x00000000;
+		// printf("HexRep: 0x%08X \n", hexRep);
+	}
 }
 
 int main(void)
@@ -42,7 +70,8 @@ int main(void)
 		i++;
 	}
 
-	handle_instruction();
+	printf("--- Handling Instructions ---\n");
+	handle_instruction(pieces);
 
 
 	return 0;
