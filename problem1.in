@@ -63,3 +63,8 @@ array: .word 0,0,0,0,0,0,0,0,0,0
 print: .asciiz "\nthe sorted array : "
 space: .asciiz " "
 
+
+
+addiu $a0, $zero, 0
+addiu $a1, $zero, 0xA
+bne $a1, $a2, -8
