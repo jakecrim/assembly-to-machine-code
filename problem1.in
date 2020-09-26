@@ -71,3 +71,8 @@ out: li $v0,10
 syscall
 
 
+
+
+addiu $a0, $zero, 0
+addiu $a1, $zero, 0xA
+bne $a1, $a2, -8
