@@ -8,4 +8,14 @@ add $t7, $s7, $t7 # get addr of A[j]
 lw $t0, 0($t7) #t0 is A[j]
 lw $t1, 4($t7) #t1 is A[j+1]
 sub $t2, $t0, $t1 
-bgtz $t2, -14
+bgtz $t2, -14	#NEED HELP on negative offset
+sw $t1, 0($t7) #t0 is A[j]
+sw $t0, 4($t7) #t0 is A[j+1]
+
+addi $s1, $s1, 1
+sub $s5, $s6, $s0 #s3 is N-i-1
+bne $s1, $s0, ?? #NEED HELP on negative offset
+addi $s0, $s0, 1
+lui $s1, 0 #j
+bne $s0, $s6, ?? #NEED HELP on negative offset
+
