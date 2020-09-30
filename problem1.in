@@ -1,76 +1,18 @@
 lw $8, 0x60($10)
 lui $s0,0 #int i=0
 lui $s1,0 #int j=0
-lui $s2,9 #int N-1
-
+addi $s2,$s2,0018 #int N-1 (size = 10)
 sll $t7, $s1, 2
 add $t7, $s7, $t7 # get addr of A[j]
 lw $t0, 0($t7) #t0 is A[j]
 lw $t1, 4($t7) #t1 is A[j+1]
 sub $t2, $t0, $t1 
-bgtz $t2, -14	#NEED HELP on negative offset
+bgtz $t2, 12 #branch to line 15 (swap function)
 sw $t1, 0($t7) #t0 is A[j]
 sw $t0, 4($t7) #t0 is A[j+1]
-
 addi $s1, $s1, 1
 sub $s5, $s6, $s0 #s3 is N-i-1
-bne $s1, $s0, ?? #NEED HELP on negative offset
+bne $s1, $s0, FFF6 #branch to line 6 (loop function)
 addi $s0, $s0, 1
 lui $s1, 0 #j
-bne $s0, $s6, ?? #NEED HELP on negative offset
-
-<<<<<<< HEAD
-L2: beq $s1,$s2,printf
-add $t1,$t1,$s2
-lw $t0,0($t1)   #a[i]
-L3: beq $s3,$s1,incc
-add $t1,$t1,$s3
-lw $t2,0($t1)   #a[j]
-slt $t3,$t0,$t2
-beq $t3,$0,swap
-L4: addi $s3,$s3,4
-j L3
-
-swap:
-sw $t0,0($t1)
-sub $t1,$t1,$s2
-sw $t2,0($t1)
-j L4
-
-incc:
-addi $s2,$s2,4
-j L2
-
-printf:
-la $t1,array
-li $t0,0
-li $v0,4
-la $a0,print
-syscall
-li $s2,0
-li $s1,10
-L5: beq $s1,$s2,out
-li $v0,1
-lw $t0,0($t1)
-move $a0,$t0
-syscall
-li $v0,4
-la $a0,space
-syscall
-addi $s2,$s2,1
-addi $t1,$t1,4
-j L5
-
-out: li $v0,10
-syscall
-.end
-.data
-array: .word 0,0,0,0,0,0,0,0,0,0
-print: .asciiz "\nthe sorted array : "
-space: .asciiz " "
-
-
-
-
-=======
->>>>>>> a15ca26e8fbd11b73b8f73e15bd82a6bfff7af84
+bne $s0, $s6, FFF3 #branch to line 6 (loop function)
