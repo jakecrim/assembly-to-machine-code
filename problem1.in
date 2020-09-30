@@ -1,18 +1,18 @@
-lw $8, 0x60($10)
-lui $s0,0 #int i=0
-lui $s1,0 #int j=0
-addi $s2,$s2,0018 #int N-1 (size = 10)
-sll $t7, $s1, 2
-add $t7, $s7, $t7 # get addr of A[j]
-lw $t0, 0($t7) #t0 is A[j]
-lw $t1, 4($t7) #t1 is A[j+1]
-sub $t2, $t0, $t1 
-bgtz $t2, 12 #branch to line 15 (swap function)
-sw $t1, 0($t7) #t0 is A[j]
-sw $t0, 4($t7) #t0 is A[j+1]
-addi $s1, $s1, 1
-sub $s5, $s6, $s0 #s3 is N-i-1
-bne $s1, $s0, FFF6 #branch to line 6 (loop function)
-addi $s0, $s0, 1
-lui $s1, 0 #j
-bne $s0, $s6, FFF3 #branch to line 6 (loop function)
+lw $8,0x60($10)
+lui $s0,0x0000
+lui $s1,0x0000
+addi $s2,$s2,0x0018
+sll $t7,$s1,0x0002
+add $t7,$s7,$t7
+lw $t0,0x00($t7)
+lw $t1,0x04($t7)
+sub $t2,$t0,$t1 
+bgtz $t2,0x000C
+sw $t1,0x00($t7)
+sw $t0,0x04($t7)
+addi $s1,$s1,0x0001
+sub $s5,$s6,$s0
+bne $s1, $s0,0xFFF6
+addi $s0,$s0,0x0001
+lui $s1,0x0000
+bne $s0,$s6,0xFFF3 
