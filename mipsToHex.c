@@ -3,12 +3,114 @@
 #include <string.h>
 #include <stdint.h>
 #include <assert.h>
+#include <stdbool.h>
 #include "mipsToHex.h"
 
 #define ROWS 11
 #define COLS 128
 
 char raw[100][100];
+
+
+/* HASH TABLE FUNCTIONS */
+uint32_t hash(char * reg_name)
+{
+	int length = strnlen(reg_name, MAX_REG_NAME);
+	uint32_t hashVal = 0;
+	for(int i = 0; i < length; i++)
+	{
+		hashVal += reg_name[i];
+		hashVal = ((hashVal * reg_name[i]) % TABLE_SIZE);
+	}
+
+	return hashVal;
+}
+
+bool hash_table_open()
+{
+	for(int i = 0; i < TABLE_SIZE; i++)
+		hash_table[i] = NULL;
+
+	return 0;
+}
+
+bool hash_table_insert(hexRegRep * current)
+{
+	if(current == NULL)
+		return false;
+	int index = hash(current->reg_name);
+	for(int i = 0; i < TABLE_SIZE; i++)
+	{
+		int attempt = (i + index) % TABLE_SIZE;
+		if(hash_table[attempt] == NULL || hash_table[attempt] == DELETED)
+		{
+			hash_table[attempt] = current;
+			return true;
+		}
+	}
+	return false;
+}
+
+hexRegRep * hash_table_search(char * current)
+{
+	int index = hash(current);
+	for(int i = 0; i < TABLE_SIZE; i++)
+	{
+		int attempt = (i + index) % TABLE_SIZE;
+		if(hash_table[attempt] == NULL)
+			return false;
+		if(hash_table[attempt] == DELETED)
+			continue;
+		if(hash_table[attempt] != NULL && strcmp(hash_table[attempt]->reg_name, current) == 0)
+		{
+			return hash_table[attempt];
+		}
+	}
+	return NULL;
+}
+
+void hash_table_print()
+{
+	printf("Start: \n");
+	for(int i = 0; i < TABLE_SIZE; i++)
+	{
+		if (hash_table[i] == NULL)
+			printf("%i \t--- \n", i);
+		else if(hash_table[i] == DELETED)
+		{
+			printf("DELETED \n");
+		}
+		else
+		{
+			printf("%i \t %s \n", i , hash_table[i]->reg_name);
+		}
+		
+	}
+	printf("End: \n");
+}
+
+hexRegRep * hash_table_remove(char * current)
+{
+	int index = hash(current);
+	for(int i = 0; i < TABLE_SIZE; i++)
+	{
+		int attempt = (i + index) % TABLE_SIZE;
+		if (hash_table[attempt] == NULL)
+			return NULL;
+		if (hash_table[attempt] == DELETED)
+			continue;
+		if(hash_table[attempt] != NULL && strcmp(hash_table[attempt]->reg_name, current) == 0)
+		{
+			hexRegRep * returnForFree = hash_table[attempt];
+			hash_table[attempt] = DELETED;
+			return returnForFree;
+		}
+	}
+	return NULL;
+	
+}
+
+
 
 // Reads all instructions into 'raw'
 char * read_instruction()
@@ -54,7 +156,7 @@ void handle_instruction(char ** parsedLine2)
 	i = 0;
 	while(parsedLine[i] != NULL)
 	{
-		// printf("%s \n", parsedLine[i]);
+		printf("%s \n", parsedLine[i]);
 		i++;
 	}
 
@@ -318,13 +420,17 @@ void handle_instruction(char ** parsedLine2)
 	// handle J - type parsing
 	if(hexInfoCurrent.instructionType == 'j')
 	{
+		hash_table_print();
 		printf("%s \n", parsedLine[1]);
-		// uint32_t hexy = (uint32_t)strtol(parsedLine[1], NULL, 0);
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (uint32_t)strtol(parsedLine[1], NULL, 0);
-		// printf("HexRep: 0x%08x \n", hexy);
 		printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
 
+	// handle R - type parsing
+	if(hexInfoCurrent.instructionType == 'r')
+	{
+		// bla...
+	}
 
 	/* Identify rt register */
 
@@ -362,6 +468,82 @@ int main(void)
 	// }
 
 	printf("--- Handling Instructions ---\n");
+
+	hash_table_open();
+	
+	// filling hash table
+	hexRegRep regs0 = {.reg_name = "zero" , .hexRegRepCurrent = 0x0};
+	hexRegRep regs1 = {.reg_name = "at" , .hexRegRepCurrent = 0x1};
+	hexRegRep regs2 = {.reg_name = "v0" , .hexRegRepCurrent = 0x2};
+	hexRegRep regs3 = {.reg_name = "v1" , .hexRegRepCurrent = 0x3};
+	hexRegRep regs4 = {.reg_name = "a0" , .hexRegRepCurrent = 0x4};
+	hexRegRep regs5 = {.reg_name = "a1" , .hexRegRepCurrent = 0x5};
+	hexRegRep regs6 = {.reg_name = "a2" , .hexRegRepCurrent = 0x6};
+	hexRegRep regs7 = {.reg_name = "a3" , .hexRegRepCurrent = 0x7};
+	hexRegRep regs8 = {.reg_name = "t0" , .hexRegRepCurrent = 0x8};
+	hexRegRep regs9 = {.reg_name = "t1" , .hexRegRepCurrent = 0x9};
+	hexRegRep regs10 = {.reg_name = "t2" , .hexRegRepCurrent = 0x10};
+	hexRegRep regs11 = {.reg_name = "t3" , .hexRegRepCurrent = 0x11};
+	hexRegRep regs12 = {.reg_name = "t4" , .hexRegRepCurrent = 0x12};
+	hexRegRep regs13 = {.reg_name = "t5" , .hexRegRepCurrent = 0x13};
+	hexRegRep regs14 = {.reg_name = "t6" , .hexRegRepCurrent = 0x14};
+	hexRegRep regs15 = {.reg_name = "t7" , .hexRegRepCurrent = 0x15};
+	hexRegRep regs16 = {.reg_name = "s0" , .hexRegRepCurrent = 0x16};
+	hexRegRep regs17 = {.reg_name = "s1" , .hexRegRepCurrent = 0x17};
+	hexRegRep regs18 = {.reg_name = "s2" , .hexRegRepCurrent = 0x18};
+	hexRegRep regs19 = {.reg_name = "s3" , .hexRegRepCurrent = 0x19};
+	hexRegRep regs20 = {.reg_name = "s4" , .hexRegRepCurrent = 0x20};
+	hexRegRep regs21 = {.reg_name = "s5" , .hexRegRepCurrent = 0x21};
+	hexRegRep regs22 = {.reg_name = "s6" , .hexRegRepCurrent = 0x22};
+	hexRegRep regs23 = {.reg_name = "s7" , .hexRegRepCurrent = 0x23};
+	hexRegRep regs24 = {.reg_name = "t8" , .hexRegRepCurrent = 0x24};
+	hexRegRep regs25 = {.reg_name = "t9" , .hexRegRepCurrent = 0x25};
+	hexRegRep regs26 = {.reg_name = "k0" , .hexRegRepCurrent = 0x26};
+	hexRegRep regs27 = {.reg_name = "k1" , .hexRegRepCurrent = 0x27};
+	hexRegRep regs28 = {.reg_name = "gp" , .hexRegRepCurrent = 0x28};
+	hexRegRep regs29 = {.reg_name = "sp" , .hexRegRepCurrent = 0x29};
+	hexRegRep regs30 = {.reg_name = "fp" , .hexRegRepCurrent = 0x30};
+	hexRegRep regs31 = {.reg_name = "ra" , .hexRegRepCurrent = 0x31};
+
+	hash_table_insert(&regs0);
+	hash_table_insert(&regs1);
+	hash_table_insert(&regs2);
+	hash_table_insert(&regs3);
+	hash_table_insert(&regs4);
+	hash_table_insert(&regs5);
+	hash_table_insert(&regs6);
+	hash_table_insert(&regs7);
+	hash_table_insert(&regs8);
+	hash_table_insert(&regs9);
+	hash_table_insert(&regs10);
+	hash_table_insert(&regs11);
+	hash_table_insert(&regs12);
+	hash_table_insert(&regs13);
+	hash_table_insert(&regs14);
+	hash_table_insert(&regs15);
+	hash_table_insert(&regs16);
+	hash_table_insert(&regs17);
+	hash_table_insert(&regs18);
+	hash_table_insert(&regs19);
+	hash_table_insert(&regs20);
+	hash_table_insert(&regs21);
+	hash_table_insert(&regs22);
+	hash_table_insert(&regs23);
+	hash_table_insert(&regs24);
+	hash_table_insert(&regs25);
+	hash_table_insert(&regs26);
+	hash_table_insert(&regs27);
+	hash_table_insert(&regs28);
+	hash_table_insert(&regs29);
+	hash_table_insert(&regs30);
+	hash_table_insert(&regs31);
+
+	// hash_table_print();
+	// hexRegRep * current = hash_table_search("s5");
+	// printf("Found Value 0x%X \n", current->hexRegRepCurrent);
+	// hash_table_remove("v0");
+	// hash_table_print();
+
 	read_instruction();
 	handle_instruction(pieces);
 

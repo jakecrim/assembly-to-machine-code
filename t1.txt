@@ -1,5 +1,6 @@
 jal 0x040000
 addu $a0, $a2, $a3
+jal 0x040000
 bne $a1, $a2, -8
 addiu $a0, $zero, 0
 addiu $a1, $zero, 0xA
