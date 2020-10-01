@@ -23,14 +23,14 @@ lw $s7,0x0($a0)
 lui $s0,0x0
 lui $s1,0x0
 addi $s2,$s2,0x18
-sll $a1,$s1,0x2
-add $a1,$s7,$a1
-lw $a2,0x00,$t7
-lw $a3,0x04,$t7
-sub $a4,$a2,$a3 
-bgtz $a4,0xC
-sw $a3,0x00, $t7
-sw $a2,0x04, $t7
+sll $f7,$s1,0x2
+add $f7,$s7,$f7
+lw $f4,0x00($t7)
+lw $f5,0x04($t7)
+sub $f6,$f4,$f5 
+bgtz $f6,0xC
+sw $f5,0x00($t7)
+sw $f4,0x04($t7)
 addi $s1,$s1,0x1
 sub $s5,$s6,$s0
 bne $s1, $s0,0xFFF6

@@ -13,4 +13,10 @@ jal 0x040000
 bne $a1, $a2, 0x5
 addiu $a0, $zero, 0
 addiu $a1, $zero, 0xA
+bne $a1, $a2, 0x5addu $v0, $a2, $t3
+jal 0x040000
+jal 0x040000
+bne $a1, $a2, 0x5
+addiu $a0, $zero, 0
+addiu $a1, $zero, 0xA
 bne $a1, $a2, 0x5

@@ -168,7 +168,7 @@ void handle_instruction(int line)
 
 
 	/* PARSING INTO PIECES OF THE SINGLE INSTRUCTION LINE */	
-	tempParse = strtok(raw[line], " $,");
+	tempParse = strtok(raw[line], " $,()");
 	while(tempParse != NULL)
 	{
 		parsedLine[i] = tempParse;
@@ -267,6 +267,17 @@ void handle_instruction(int line)
 	{
 		printf("LUI\n");
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0x3C000000;
+		// rt register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 16;
+		// immediate 
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (uint32_t)strtol(parsedLine[2], NULL, 0);
+		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
+	}
+	else if(strcmp(parsedLine[0], "lw") == 0) // rt, offset(base) ****
+	{
+		printf("LW\n");
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0x8C000000;
 		// rt register
 		current = hash_table_search(parsedLine[1]);
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 16;
