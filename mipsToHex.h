@@ -1,5 +1,8 @@
 #include <stdint.h>
 
+
+#define PROGRAM_LENGTH 7
+
 #define MAX_REG_NAME 4
 #define TABLE_SIZE 32
 
