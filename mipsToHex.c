@@ -429,13 +429,30 @@ void handle_instruction(char ** parsedLine2)
 	// handle R - type parsing
 	if(hexInfoCurrent.instructionType == 'r')
 	{
-		// bla...
+		printf("BEFORE: HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
+		hexRegRep * current;
+		
+		/* Retrieve the hex values for each register name and put it into the correct place in the hex representation */
+		// rd register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 11;
+		printf("HexRep After: 0x%08x \n", hexInfoCurrent.hexRep);
+		// rs register
+		current = hash_table_search(parsedLine[2]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 21;
+		printf("HexRep After: 0x%08x \n", hexInfoCurrent.hexRep);
+		// rt register
+		current = hash_table_search(parsedLine[3]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 16;
+		printf("HexRep After: 0x%08x \n", hexInfoCurrent.hexRep);
 	}
 
-	/* Identify rt register */
 
-	/* Identify rs register */
-
+	// hash_table_print();
+	// hexRegRep * current = hash_table_search("s5");
+	// printf("Found Value 0x%X \n", current->hexRegRepCurrent);
+	// hash_table_remove("v0");
+	// hash_table_print()
 }
 
 int main(void)
@@ -482,28 +499,28 @@ int main(void)
 	hexRegRep regs7 = {.reg_name = "a3" , .hexRegRepCurrent = 0x7};
 	hexRegRep regs8 = {.reg_name = "t0" , .hexRegRepCurrent = 0x8};
 	hexRegRep regs9 = {.reg_name = "t1" , .hexRegRepCurrent = 0x9};
-	hexRegRep regs10 = {.reg_name = "t2" , .hexRegRepCurrent = 0x10};
-	hexRegRep regs11 = {.reg_name = "t3" , .hexRegRepCurrent = 0x11};
-	hexRegRep regs12 = {.reg_name = "t4" , .hexRegRepCurrent = 0x12};
-	hexRegRep regs13 = {.reg_name = "t5" , .hexRegRepCurrent = 0x13};
-	hexRegRep regs14 = {.reg_name = "t6" , .hexRegRepCurrent = 0x14};
-	hexRegRep regs15 = {.reg_name = "t7" , .hexRegRepCurrent = 0x15};
-	hexRegRep regs16 = {.reg_name = "s0" , .hexRegRepCurrent = 0x16};
-	hexRegRep regs17 = {.reg_name = "s1" , .hexRegRepCurrent = 0x17};
-	hexRegRep regs18 = {.reg_name = "s2" , .hexRegRepCurrent = 0x18};
-	hexRegRep regs19 = {.reg_name = "s3" , .hexRegRepCurrent = 0x19};
-	hexRegRep regs20 = {.reg_name = "s4" , .hexRegRepCurrent = 0x20};
-	hexRegRep regs21 = {.reg_name = "s5" , .hexRegRepCurrent = 0x21};
-	hexRegRep regs22 = {.reg_name = "s6" , .hexRegRepCurrent = 0x22};
-	hexRegRep regs23 = {.reg_name = "s7" , .hexRegRepCurrent = 0x23};
-	hexRegRep regs24 = {.reg_name = "t8" , .hexRegRepCurrent = 0x24};
-	hexRegRep regs25 = {.reg_name = "t9" , .hexRegRepCurrent = 0x25};
-	hexRegRep regs26 = {.reg_name = "k0" , .hexRegRepCurrent = 0x26};
-	hexRegRep regs27 = {.reg_name = "k1" , .hexRegRepCurrent = 0x27};
-	hexRegRep regs28 = {.reg_name = "gp" , .hexRegRepCurrent = 0x28};
-	hexRegRep regs29 = {.reg_name = "sp" , .hexRegRepCurrent = 0x29};
-	hexRegRep regs30 = {.reg_name = "fp" , .hexRegRepCurrent = 0x30};
-	hexRegRep regs31 = {.reg_name = "ra" , .hexRegRepCurrent = 0x31};
+	hexRegRep regs10 = {.reg_name = "t2" , .hexRegRepCurrent = 0xa};
+	hexRegRep regs11 = {.reg_name = "t3" , .hexRegRepCurrent = 0xb};
+	hexRegRep regs12 = {.reg_name = "t4" , .hexRegRepCurrent = 0xc};
+	hexRegRep regs13 = {.reg_name = "t5" , .hexRegRepCurrent = 0xd};
+	hexRegRep regs14 = {.reg_name = "t6" , .hexRegRepCurrent = 0xe};
+	hexRegRep regs15 = {.reg_name = "t7" , .hexRegRepCurrent = 0xf};
+	hexRegRep regs16 = {.reg_name = "s0" , .hexRegRepCurrent = 0x10};
+	hexRegRep regs17 = {.reg_name = "s1" , .hexRegRepCurrent = 0x11};
+	hexRegRep regs18 = {.reg_name = "s2" , .hexRegRepCurrent = 0x12};
+	hexRegRep regs19 = {.reg_name = "s3" , .hexRegRepCurrent = 0x13};
+	hexRegRep regs20 = {.reg_name = "s4" , .hexRegRepCurrent = 0x14};
+	hexRegRep regs21 = {.reg_name = "s5" , .hexRegRepCurrent = 0x15};
+	hexRegRep regs22 = {.reg_name = "s6" , .hexRegRepCurrent = 0x16};
+	hexRegRep regs23 = {.reg_name = "s7" , .hexRegRepCurrent = 0x17};
+	hexRegRep regs24 = {.reg_name = "t8" , .hexRegRepCurrent = 0x18};
+	hexRegRep regs25 = {.reg_name = "t9" , .hexRegRepCurrent = 0x19};
+	hexRegRep regs26 = {.reg_name = "k0" , .hexRegRepCurrent = 0x1a};
+	hexRegRep regs27 = {.reg_name = "k1" , .hexRegRepCurrent = 0x1b};
+	hexRegRep regs28 = {.reg_name = "gp" , .hexRegRepCurrent = 0x1c};
+	hexRegRep regs29 = {.reg_name = "sp" , .hexRegRepCurrent = 0x1d};
+	hexRegRep regs30 = {.reg_name = "fp" , .hexRegRepCurrent = 0x1e};
+	hexRegRep regs31 = {.reg_name = "ra" , .hexRegRepCurrent = 0x1f};
 
 	hash_table_insert(&regs0);
 	hash_table_insert(&regs1);
