@@ -120,6 +120,7 @@ char * read_instruction()
 	char filename[25];
 	int currentLength = 0;
 
+
 	printf("Input Filename for reading: \n");
 	scanf("%s", filename);
 
@@ -133,6 +134,26 @@ char * read_instruction()
 	return 0;
 }
 
+void write_instruction()
+{
+
+	// write to output file
+	FILE * outputFile;
+	outputFile = fopen("output.txt", "w");
+	if(outputFile == NULL)
+	{
+		printf("ERROR OPENING FILE \n");
+		exit(1);
+	}
+
+	for(int i = 0; i < PROGRAM_LENGTH; i++)
+	{
+		fprintf(outputFile, "0x%08x \n", hexInfoCurrent.hexRepsArray[i]);
+	}
+	fclose(outputFile);
+
+}
+
 // Handles the instruction residing in 'parsedLine' currently this is only handling the first instruction of the text file
 // 	though soon t will iterate over each line in 'raw'
 void handle_instruction(int line)
@@ -143,6 +164,8 @@ void handle_instruction(int line)
 	int i = 0;
 	parsedLine[5] = NULL;
 
+	hexRegRep * current; // this is the current hexadecimal representation of the register we are working with (rs, rt, rd)
+
 
 	/* PARSING INTO PIECES OF THE SINGLE INSTRUCTION LINE */	
 	tempParse = strtok(raw[line], " $,");
@@ -152,13 +175,8 @@ void handle_instruction(int line)
 		tempParse = strtok(NULL, " $,");
 		i++;
 	}
-	printf("Segments of instruction: \n");
+	printf(" - Current Instruction - \n");
 	i = 0;
-	while(parsedLine[i] != NULL)
-	{
-		printf("%s \n", parsedLine[i]);
-		i++;
-	}
 
 	/* Identify The Instruction */
 	// I-type
@@ -166,100 +184,203 @@ void handle_instruction(int line)
 	{
 		printf("ADDIU \n");
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0x24000000;
-		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
+		// rs register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 16;
+		// rt register
+		current = hash_table_search(parsedLine[2]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 21;
+		// immediate 
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (uint32_t)strtol(parsedLine[3], NULL, 0);
 	}
 	else if(strcmp(parsedLine[0], "addi") == 0) // rt (base) , rs , offset
 	{
 		printf("ADDI \n");
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0x20000000;
+		// rs register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 16;
+		// rt register
+		current = hash_table_search(parsedLine[2]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 21;
+		// immediate 
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (uint32_t)strtol(parsedLine[3], NULL, 0);
 		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
 	else if(strcmp(parsedLine[0], "andi") == 0) // rt (base) , rs , offset
 	{
 		printf("ANDI \n");
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0x30000000;
+		// rs register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 16;
+		// rt register
+		current = hash_table_search(parsedLine[2]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 21;
+		// immediate 
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (uint32_t)strtol(parsedLine[3], NULL, 0);
 		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
 	else if(strcmp(parsedLine[0], "ori") == 0) // rt (base) , rs , offset
 	{
 		printf("ORI\n");
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0x34000000;
+		// rs register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 16;
+		// rt register
+		current = hash_table_search(parsedLine[2]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 21;
+		// immediate 
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (uint32_t)strtol(parsedLine[3], NULL, 0);
 		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
 	else if(strcmp(parsedLine[0], "xori") == 0) // rt (base) , rs , offset
 	{
 		printf("XORI\n");
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0x38000000;
+		// rs register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 16;
+		// rt register
+		current = hash_table_search(parsedLine[2]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 21;
+		// immediate 
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (uint32_t)strtol(parsedLine[3], NULL, 0);
 		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
 	else if(strcmp(parsedLine[0], "slti") == 0) // rt (base) , rs , offset
 	{
 		printf("SLTI\n");
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0x28000000;
+		// rs register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 16;
+		// rt register
+		current = hash_table_search(parsedLine[2]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 21;
+		// immediate 
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (uint32_t)strtol(parsedLine[3], NULL, 0);
 		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
 	else if(strcmp(parsedLine[0], "lui") == 0) // rt , imm
 	{
 		printf("LUI\n");
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0x3C000000;
+		// rt register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 16;
+		// immediate 
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (uint32_t)strtol(parsedLine[2], NULL, 0);
 		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
-	else if(strcmp(parsedLine[0], "sw") == 0) // rt (base) , rs , offset
+	else if(strcmp(parsedLine[0], "sw") == 0) // rt, offset(base) ****
 	{
 		printf("SW\n");
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0xAC000000;
+		// rt register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 16;
+		// immediate 
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (uint32_t)strtol(parsedLine[2], NULL, 0);
 		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
-	else if(strcmp(parsedLine[0], "sb") == 0) // rt (base) , rs , offset
+	else if(strcmp(parsedLine[0], "sb") == 0) // rt (base) , rs , offset ****
 	{
 		printf("SB\n");
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0xA0000000;
+		// rt register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 16;
+		// offset
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (uint32_t)strtol(parsedLine[2], NULL, 0);
 		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
-	else if(strcmp(parsedLine[0], "sh") == 0) // rt (base) , rs , offset
+	else if(strcmp(parsedLine[0], "sh") == 0) // rt (base) , rs , offset ****
 	{
 		printf("SH\n");
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0xA4000000;
+		// rt register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 16;
+		// offset
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (uint32_t)strtol(parsedLine[2], NULL, 0);
 		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
 	else if(strcmp(parsedLine[0], "beq") == 0) // rs , rt, offset
 	{
 		printf(" BEQ \n");
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0x10000000;
+		// rs register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 21;
+		// rt register
+		current = hash_table_search(parsedLine[2]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 16;
+		// offset 
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (uint32_t)strtol(parsedLine[3], NULL, 0);
 		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
 	else if(strcmp(parsedLine[0], "bgez") == 0) // SPECIAL: rs , offset
 	{
 		printf("BGEZ \n");
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0x04010000;
+		// rs register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 21;
+		// offset 
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (uint32_t)strtol(parsedLine[2], NULL, 0);
 		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
 	else if(strcmp(parsedLine[0], "bgtz") == 0) // SPECIAL: rs, offset
 	{
 		printf("BGTZ \n");
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0x1C000000;
+		// rs register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 21;
+		// offset 
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (uint32_t)strtol(parsedLine[2], NULL, 0);
 		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
 	else if(strcmp(parsedLine[0], "blez") == 0) // SPECIAL: rs, offset
 	{
 		printf("BLEZ \n");
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0x18000000;
+		// rs register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 21;
+		// offset 
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (uint32_t)strtol(parsedLine[2], NULL, 0);
 		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
 	else if(strcmp(parsedLine[0], "bltz") == 0) // SPECIAL: rs, offset
 	{
 		printf("BLTZ \n");
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0x04000000;
+		// rs register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 21;
+		// offset 
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (uint32_t)strtol(parsedLine[2], NULL, 0);
 		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
 	else if(strcmp(parsedLine[0], "bne") == 0) // rs , rt, offset
 	{
 		printf("BNE \n");
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0x14000000;
+		// rs register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 21;
+		// rt register
+		current = hash_table_search(parsedLine[2]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 16;
+		// immediate 
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (uint32_t)strtol(parsedLine[3], NULL, 0);
 		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
 
-	// J-type
+	// J-type  registers handled below
 	else if(strcmp(parsedLine[0], "j") == 0)
 	{
 		printf("J\n");
@@ -279,134 +400,295 @@ void handle_instruction(int line)
 	{
 		printf("ADD\n");
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0x00000020;
-		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
+		// rd register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 11;
+		// rs register
+		current = hash_table_search(parsedLine[2]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 21;
+		// rt register
+		current = hash_table_search(parsedLine[3]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 16;
+		printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
 	else if(strcmp(parsedLine[0], "addu") == 0) // rd, rs, rt
 	{
 		printf("ADDU\n");
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0x00000021;
+		// rd register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 11;
+		// rs register
+		current = hash_table_search(parsedLine[2]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 21;
+		// rt register
+		current = hash_table_search(parsedLine[3]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 16;
+		printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
 	else if(strcmp(parsedLine[0], "sub") == 0) // rd, rs, rt
 	{
 		printf("SUB\n");
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0x00000022;
+		// rd register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 11;
+		// rs register
+		current = hash_table_search(parsedLine[2]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 21;
+		// rt register
+		current = hash_table_search(parsedLine[3]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 16;
+		printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
 	else if(strcmp(parsedLine[0], "subu") == 0) // rd, rs, rt
 	{
 		printf("SUBU\n");
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0x00000023;
+		// rd register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 11;
+		// rs register
+		current = hash_table_search(parsedLine[2]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 21;
+		// rt register
+		current = hash_table_search(parsedLine[3]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 16;
+		printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
 	else if(strcmp(parsedLine[0], "mult") == 0)	// rs, rt
 	{
 		printf("MULT\n");
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0x00000018;
+		// rs register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 21;
+		// rt register
+		current = hash_table_search(parsedLine[2]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 16;
+		printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
 	else if(strcmp(parsedLine[0], "multu") == 0)	// rs, rt
 	{
 		printf("MULTU\n");
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0x00000019;
+		// rs register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 21;
+		// rt register
+		current = hash_table_search(parsedLine[2]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 16;
+		printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
 	else if(strcmp(parsedLine[0], "div") == 0)	// rs, rt
 	{
 		printf("DIV\n");
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0x0000001A;
+		// rs register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 21;
+		// rt register
+		current = hash_table_search(parsedLine[2]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 16;
+		printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
 	else if(strcmp(parsedLine[0], "divu") == 0)	// rs, rt
 	{
 		printf("DIVU\n");
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0x00000001B;
+		// rs register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 21;
+		// rt register
+		current = hash_table_search(parsedLine[2]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 16;
+		printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
 	else if(strcmp(parsedLine[0], "and") == 0) // rd, rs , rt
 	{
 		printf("AND\n");
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0x00000024;
+		// rd register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 11;
+		// rs register
+		current = hash_table_search(parsedLine[2]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 21;
+		// rt register
+		current = hash_table_search(parsedLine[3]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 16;
+		printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
 	else if(strcmp(parsedLine[0], "mfhi") == 0) // rd
 	{
 		printf("MFHI\n");
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0x00000010;
+		// rd register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 11;
 		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
 	else if(strcmp(parsedLine[0], "mflo") == 0) // rd
 	{
 		printf("MFLO\n");
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0x00000012;
+		// rd register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 11;
 		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
 	else if(strcmp(parsedLine[0], "mthi") == 0) // rs
 	{
 		printf("MTHI\n");
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0x00000011;
+		// rs register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 21;
 		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
 	else if(strcmp(parsedLine[0], "mtlo") == 0) // rs
 	{
 		printf("MTLO\n");
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0x00000013;
-		
+		// rs register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 21;
 		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
 	else if(strcmp(parsedLine[0], "or") == 0)  // rd, rs , rt
 	{
 		printf("OR\n");
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0x00000025;
+		// rd register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 11;
+		// rs register
+		current = hash_table_search(parsedLine[2]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 21;
+		// rt register
+		current = hash_table_search(parsedLine[3]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 16;
+		printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
 	else if(strcmp(parsedLine[0], "xor") == 0) // rd, rs , rt
 	{
 		printf("XOR\n");
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0x00000026;
+		// rd register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 11;
+		// rs register
+		current = hash_table_search(parsedLine[2]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 21;
+		// rt register
+		current = hash_table_search(parsedLine[3]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 16;
+		printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
 	else if(strcmp(parsedLine[0], "nor") == 0) // rd, rs , rt
 	{
 		printf("NOR\n");
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0x00000027;
+		// rd register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 11;
+		// rs register
+		current = hash_table_search(parsedLine[2]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 21;
+		// rt register
+		current = hash_table_search(parsedLine[3]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 16;
+		printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
 	else if(strcmp(parsedLine[0], "slt") == 0) // rd, rs , rt
 	{
 		printf("SLT\n");
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0x0000002A;
+		// rd register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 11;
+		// rs register
+		current = hash_table_search(parsedLine[2]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 21;
+		// rt register
+		current = hash_table_search(parsedLine[3]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 16;
+		printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
 	else if(strcmp(parsedLine[0], "sll") == 0) // rd, rt , sa // is already 0
 	{
 		printf("SLL\n");
 		// hexInfoCurrent.hexRep = hexRep | 0x00000000;
+		// rd register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 11;
+		// rt register
+		current = hash_table_search(parsedLine[2]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 16;
+		// shift amount
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (uint32_t)strtol(parsedLine[3], NULL, 0) << 6;
 		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
 	else if(strcmp(parsedLine[0], "srl") == 0) // rd, rt , sa 
 	{
 		printf("SRL\n");
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0x00000002;
+		// rd register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 11;
+		// rt register
+		current = hash_table_search(parsedLine[2]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 16;
+		// shift amount
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (uint32_t)strtol(parsedLine[3], NULL, 0) << 6;
 		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
 	else if(strcmp(parsedLine[0], "sra") == 0) // rd, rt , sa 
 	{
 		printf("SRA\n");
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0x000000003;
+		// rd register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 11;
+		// rt register
+		current = hash_table_search(parsedLine[2]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 16;
+		// shift amount
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (uint32_t)strtol(parsedLine[3], NULL, 0) << 6;
 		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
 	else if(strcmp(parsedLine[0], "jr") == 0) // rs
 	{
 		printf("JR\n");
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0x00000008;
+		// rs register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 21;
 		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
 	else if(strcmp(parsedLine[0], "jalr") == 0) // rd, rs
 	{
 		printf("JALR\n");
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0x00000009;
-		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
+		// rd register
+		current = hash_table_search(parsedLine[1]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 11;
+		// rs register
+		current = hash_table_search(parsedLine[2]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 21;
+	// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
 
 	/* Identify Instruction Type */
@@ -426,91 +708,16 @@ void handle_instruction(int line)
 		printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
 
-	// handle R - type parsing
-	if(hexInfoCurrent.instructionType == 'r')
-	{
-		printf("BEFORE: HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
-		hexRegRep * current; // this is the current hexadecimal representation of the register we are working with (rs, rt, rd)
-		
-		/* Retrieve the hex values for each register name and put it into the correct place in the hex representation */
-		// rd register
-		current = hash_table_search(parsedLine[1]);
-		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 11;
-		printf("HexRep After: 0x%08x \n", hexInfoCurrent.hexRep);
-		// rs register
-		current = hash_table_search(parsedLine[2]);
-		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 21;
-		printf("HexRep After: 0x%08x \n", hexInfoCurrent.hexRep);
-		// rt register
-		current = hash_table_search(parsedLine[3]);
-		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 16;
-		printf("HexRep After: 0x%08x \n", hexInfoCurrent.hexRep);
-	}
-
-	if(hexInfoCurrent.instructionType == 'i')
-	{
-		hexRegRep * current; // this is the current hexadecimal representation of the register we are working with (rs, rt, rd)
-
-		printf("HexRep Before: 0x%08x \n", hexInfoCurrent.hexRep);
-
-		/* Retrieve the hex values for each register name and put it into the correct place in the hex representation */
-		// rs register
-		current = hash_table_search(parsedLine[1]);
-		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 21;
-		printf("HexRep After: 0x%08x \n", hexInfoCurrent.hexRep);
-		// rt register
-		current = hash_table_search(parsedLine[2]);
-		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 16;
-		printf("HexRep After: 0x%08x \n", hexInfoCurrent.hexRep);
-		// immediate 
-		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (uint32_t)strtol(parsedLine[3], NULL, 0);
-		printf("HexRep After: 0x%08x \n", hexInfoCurrent.hexRep);
-
-
-	}
-
-	// hash_table_print();
-	// hexRegRep * current = hash_table_search("s5");
-	// printf("Found Value 0x%X \n", current->hexRegRepCurrent);
-	// hash_table_remove("v0");
-	// hash_table_print()
-}
-
-void write_instruction(int line)
-{
-
-	// write to output file
+	// store each hex representation into an array to be written to output file later
+	printf("HexRep After: 0x%08x \n", hexInfoCurrent.hexRep);
+	hexInfoCurrent.hexRepsArray[line] = hexInfoCurrent.hexRep;
 
 }
+
 
 int main(void)
 {
 	printf("| Assembly to Machine Code Generator | \n");
-	// variables
-	// char * pieces[5];
-	/* TEST STUFF IM SAVING FOR LATER BUT IS CURRENTLY UNUSED */
-	// char test1[] = "addiu $a0, $zero, 0";
-	// char * parsedLine;
-	// int i = 0;
-
-	// pieces[4] = NULL;
-
-	// // Parsing the test string
-	// parsedLine = strtok(test1, " $,");
-	// while(parsedLine != NULL)
-	// {
-	// 	pieces[i] = parsedLine;
-	// 	parsedLine = strtok(NULL, " $,");
-	// 	i++;
-	// }
-	// // printing...
-	// printf("Segments of instruction: \n");
-	// i = 0;
-	// while(pieces[i] != NULL)
-	// {
-	// 	printf("%s \n", pieces[i]);
-	// 	i++;
-	// }
 
 	printf("--- Handling Instructions ---\n");
 
@@ -583,18 +790,16 @@ int main(void)
 	hash_table_insert(&regs30);
 	hash_table_insert(&regs31);
 
-	// hash_table_print();
-	// hexRegRep * current = hash_table_search("s5");
-	// printf("Found Value 0x%X \n", current->hexRegRepCurrent);
-	// hash_table_remove("v0");
-	// hash_table_print();
-
+	// read instructions in to raw, then go line by line the length of program (set in mipsToHex.h) and handle each instruction
 	read_instruction();
+	// write_instruction(5);
 	for(int line = 0; line <= PROGRAM_LENGTH; line++)
 	{
 		handle_instruction(line);
-		write_instruction(line);
 	}
+
+	// write to output file
+	write_instruction();
 
 	return 0;
 }
