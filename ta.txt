@@ -1,4 +1,5 @@
 addi $a0, $zero,0x0
+addu $a0,$a2,$a3 
 addi $t0, $zero,0x5
 sw $t0, 0x0($a0)
 addi $t1,$zero,0x3
@@ -27,8 +28,8 @@ sll $a1,$s1,0x2
 add $a1,$s7,$a1
 lw $a2,0x00,$t7
 lw $a3,0x04,$t7
-sub $a4,$a2,$a3 
-bgtz $a4,0xC
+sub $a0,$a2,$a3 
+bgtz $a0,0xC
 sw $a3,0x00, $t7
 sw $a2,0x04, $t7
 addi $s1,$s1,0x1

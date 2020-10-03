@@ -277,6 +277,7 @@ void handle_instruction(int line)
 	else if(strcmp(parsedLine[0], "lw") == 0) // rt, offset(base) ****
 	{
 		printf("LW\n");
+		printf("Parts: %s | %s | %s | %s | /n" , parsedLine[0], parsedLine[1], parsedLine[2], parsedLine[3]);
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0x8C000000;
 		// rt register
 		current = hash_table_search(parsedLine[1]);
@@ -288,6 +289,7 @@ void handle_instruction(int line)
 	else if(strcmp(parsedLine[0], "sw") == 0) // rt, offset(base) ****
 	{
 		printf("SW\n");
+		printf("Parts: %s | %s | %s | %s | \n" , parsedLine[0], parsedLine[1], parsedLine[2], parsedLine[3]);
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0xAC000000;
 		// rt register
 		current = hash_table_search(parsedLine[1]);
@@ -803,6 +805,7 @@ int main(void)
 
 	// read instructions in to raw, then go line by line the length of program (set in mipsToHex.h) and handle each instruction
 	read_instruction();
+	hash_table_print();
 	// write_instruction(5);
 	for(int line = 0; line <= PROGRAM_LENGTH; line++)
 	{

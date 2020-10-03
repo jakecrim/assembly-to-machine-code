@@ -1,7 +1,7 @@
 #include <stdint.h>
 
 // *** SET PROGRAM LENGTH ***
-#define PROGRAM_LENGTH 40 
+#define PROGRAM_LENGTH 43 
 // *** SET PROGRAM LENGTH ***
 
 #define MAX_REG_NAME 4
