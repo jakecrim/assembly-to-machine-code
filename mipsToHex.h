@@ -1,8 +1,8 @@
 #include <stdint.h>
 
 // *** SET PROGRAM LENGTH ***
-// #define PROGRAM_LENGTH 44
-#define PROGRAM_LENGTH 31
+#define PROGRAM_LENGTH 44
+// #define PROGRAM_LENGTH 31
 
 // *** SET PROGRAM LENGTH ***
 
