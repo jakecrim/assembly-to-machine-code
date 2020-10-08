@@ -1,26 +1,31 @@
-lw $8,0x60($10)
-jal 0x0004
-addi $sp,$sp,0xFFF4
-sw $ra,0($sp)
-sw $s0,4($sp)
-sw $s1,8($sp)
-add $s0,$a0,$zero
-addi $t1,$zero,0x1
-beq $s0,$zero,0x3C
-beq $s0,$t1,0x30
-addi $a0,$s0,0xFFFF
-jal 0xFFF7
-add $s1,$zero,$v0
-addi $a0,$v0,0xFFFE
-jal 0xFFF4
-add $v0,$v0,$s1
-lw $ra,0x0($sp)
-lw $s0,0x4($sp)
-lw $s1,0x8($sp)
-addi $sp,$sp,0x000C
-jr $ra
-addi $v0,$v0,0x1
-j 0xFFFA
+addi $a0,$zero,0x1
+jal 0x3
+addi $v0,$zero,0xA
+syscall
+addi $t0,$zero,0x1
+beq $a0,$zero,0x3
+beq $a0,$t0,0x4
+jr 0x5
 lui $v0,0x0
-j 0xFFF8
-   
+jr $ra
+addi $v0,$zero,0x1
+jr $ra
+addi $a1,$zero,0x10 //load 16 into a1
+sub $sp,$sp,$a1 //16-stack pointer
+sw $ra,0($sp)
+sw $a0,4($sp)
+addi $a2,$zero,0x1 //load 1 into a2
+sub $a0,$a0,$a2 //decrement i
+jal 0xFFF2
+sw $v0,8($sp)
+lw $a0,4($sp)
+addi $a3,$zero,0x2 //load 2 into a3
+sub $s0,$s0,$a3 //decrement i twice
+jal 0xFFED
+sw $v0,12($sp)
+lw $ra,0($sp)
+lw $t0,8($sp)
+lw $t1,12($sp)
+addi $sp,$sp,0x10
+add $v0,$t0,$t1
+jr $ra
