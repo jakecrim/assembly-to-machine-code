@@ -139,7 +139,7 @@ void write_instruction()
 
 	// write to output file
 	FILE * outputFile;
-	outputFile = fopen("output.txt", "w");
+	outputFile = fopen("output.in", "w");
 	if(outputFile == NULL)
 	{
 		printf("ERROR OPENING FILE \n");
