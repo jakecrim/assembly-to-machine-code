@@ -1,45 +1,31 @@
-main:
-addi $a0,$zero,0x1 //starting value for fib
+addi $a0,$zero,0x1
 jal 0x3
-addi $v0,$zero,0xA //exit program
+addi $v0,$zero,0xA
 syscall
-
-vfib:
-addi $t0,$zero,0x1 //set register $t0 to 1
-beq $a0,$zero,0x3	//go to return 0 if i=0
-beq $a0,$t0,0x4  //go to return 1 if i=1
+addi $t0,$zero,0x1
+beq $a0,$zero,0x3
+beq $a0,$t0,0x4
 jr 0x5
-
-fib0:
-lui $v0,0x0 //return 0
+lui $v0,0x0
 jr $ra
-
-fib1:
-addi $v0,$zero,0x1 //return 1
+addi $v0,$zero,0x1
 jr $ra
-
-fib:
-addi $sp,$sp,0xFFF0 //make room for 4 elements in the stack
-sw $ra,0($sp)	//store return address
-sw $a0,4($sp)	//store i
-
-//calculate (fib(n-1))
-addi $a0,$a0,0xFFFF //decrement i
-jal 0xFFF4  //recurse for (fib(n-1))
-sw $v0,8($sp) //save value of (fib(n-1))
-
-//calculate (fib(n-2))
-lw $a0,4($sp) //restore value of i from stack
-addi $s0,$s0,0xFFFE //decrement i twice
-jal FFF0 //recurse through fib(n-2)
-sw $v0,12($sp)	//save result in fib(n-2)
-
-//restore from stack and sum
-lw $ra,0($sp) //load return address
-lw $t0,8($sp) //load fib(n-1)
-lw $t1,12($sp) //load fib(n-2)
-addi $sp,$sp,0x10 //free 4 elements on stack
-add $v0,$t0,$t1 //sum fib(n-1)+fib(n-2)
+addi $a1,$zero,0x10 //load 16 into a1
+sub $sp,$sp,$a1 //16-stack pointer
+sw $ra,0($sp)
+sw $a0,4($sp)
+addi $a2,$zero,0x1 //load 1 into a2
+sub $a0,$a0,$a2 //decrement i
+jal 0xFFF2
+sw $v0,8($sp)
+lw $a0,4($sp)
+addi $a3,$zero,0x2 //load 2 into a3
+sub $s0,$s0,$a3 //decrement i twice
+jal 0xFFED
+sw $v0,12($sp)
+lw $ra,0($sp)
+lw $t0,8($sp)
+lw $t1,12($sp)
+addi $sp,$sp,0x10
+add $v0,$t0,$t1
 jr $ra
-
-
