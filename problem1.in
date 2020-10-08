@@ -1,5 +1,5 @@
-addi $a2,$zero,0x0
-addi $a3,$zero,0x5
+lui $a2,0x1001
+lui $a3,0x5
 sw $a3,0x0($a2
 addi $t3,$zero,0x3
 sw $t3,0x4($a2)
@@ -25,7 +25,7 @@ sub a1,t1,t0
 blez $a1,0x12
 add $a0,$zero,$t0
 lui $t2,0x0
-jal 0x4
+jal 0x10001F
 blez $t2,0xE
 sub $t1,t1,t0
 j 0xFFF7
