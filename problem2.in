@@ -1,26 +1,45 @@
-lw $8,0x60($10)
-jal 0x0004
-addi $sp,$sp,0xFFF4
-sw $ra,0($sp)
-sw $s0,4($sp)
-sw $s1,8($sp)
-add $s0,$a0,$zero
-addi $t1,$zero,0x1
-beq $s0,$zero,0x3C
-beq $s0,$t1,0x30
-addi $a0,$s0,0xFFFF
-jal 0xFFF7
-add $s1,$zero,$v0
-addi $a0,$v0,0xFFFE
-jal 0xFFF4
-add $v0,$v0,$s1
-lw $ra,0x0($sp)
-lw $s0,0x4($sp)
-lw $s1,0x8($sp)
-addi $sp,$sp,0x000C
+main:
+addi $a0,$zero,0x1 //starting value for fib
+jal 0x3
+addi $v0,$zero,0xA //exit program
+syscall
+
+vfib:
+addi $t0,$zero,0x1 //set register $t0 to 1
+beq $a0,$zero,0x3	//go to return 0 if i=0
+beq $a0,$t0,0x4  //go to return 1 if i=1
+jr 0x5
+
+fib0:
+lui $v0,0x0 //return 0
 jr $ra
-addi $v0,$v0,0x1
-j 0xFFFA
-lui $v0,0x0
-j 0xFFF8
-   
+
+fib1:
+addi $v0,$zero,0x1 //return 1
+jr $ra
+
+fib:
+addi $sp,$sp,0xFFF0 //make room for 4 elements in the stack
+sw $ra,0($sp)	//store return address
+sw $a0,4($sp)	//store i
+
+//calculate (fib(n-1))
+addi $a0,$a0,0xFFFF //decrement i
+jal 0xFFF4  //recurse for (fib(n-1))
+sw $v0,8($sp) //save value of (fib(n-1))
+
+//calculate (fib(n-2))
+lw $a0,4($sp) //restore value of i from stack
+addi $s0,$s0,0xFFFE //decrement i twice
+jal FFF0 //recurse through fib(n-2)
+sw $v0,12($sp)	//save result in fib(n-2)
+
+//restore from stack and sum
+lw $ra,0($sp) //load return address
+lw $t0,8($sp) //load fib(n-1)
+lw $t1,12($sp) //load fib(n-2)
+addi $sp,$sp,0x10 //free 4 elements on stack
+add $v0,$t0,$t1 //sum fib(n-1)+fib(n-2)
+jr $ra
+
+
