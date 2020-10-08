@@ -146,13 +146,25 @@ void write_instruction()
 		exit(1);
 	}
 
-	for(int i = 0; i < PROGRAM_LENGTH; i++)
+	for(int i = 0; i <= PROGRAM_LENGTH; i++)
 	{
 		fprintf(outputFile, "0x%08x \n", hexInfoCurrent.hexRepsArray[i]);
 	}
+	
+
 	fclose(outputFile);
 
 }
+
+void removeChar(char *s, int c){ 
+  
+    int j, n = strlen(s); 
+    for (int i=j=0; i<n; i++) 
+       if (s[i] != c) 
+          s[j++] = s[i]; 
+      
+    s[j] = '\0'; 
+} 
 
 // Handles the instruction residing in 'parsedLine' currently this is only handling the first instruction of the text file
 // 	though soon t will iterate over each line in 'raw'
@@ -168,7 +180,7 @@ void handle_instruction(int line)
 
 
 	/* PARSING INTO PIECES OF THE SINGLE INSTRUCTION LINE */	
-	tempParse = strtok(raw[line], " $,()");
+	tempParse = strtok(raw[line], " $,(");
 	while(tempParse != NULL)
 	{
 		parsedLine[i] = tempParse;
@@ -274,29 +286,42 @@ void handle_instruction(int line)
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (uint32_t)strtol(parsedLine[2], NULL, 0);
 		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
-	else if(strcmp(parsedLine[0], "lw") == 0) // rt, offset(base) ****
+	else if(strcmp(parsedLine[0], "lw") == 0) // rt, offset, (base)
 	{
 		printf("LW\n");
-		printf("Parts: %s | %s | %s | %s | /n" , parsedLine[0], parsedLine[1], parsedLine[2], parsedLine[3]);
+		// printf("Parts: %s | %s | %s | %s | \n" , parsedLine[0], parsedLine[1], parsedLine[2], parsedLine[3]);
+		// remove parenthesis
+		removeChar(parsedLine[2], '(');
+		removeChar(parsedLine[3], ')');
+		// printf("Parts: %s | %s | %s | %s | \n" , parsedLine[0], parsedLine[1], parsedLine[2], parsedLine[3]);
+
+
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0x8C000000;
 		// rt register
 		current = hash_table_search(parsedLine[1]);
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 16;
 		// immediate 
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (uint32_t)strtol(parsedLine[2], NULL, 0);
-		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
+		// base
+		current = hash_table_search(parsedLine[3]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 21;
 	}
-	else if(strcmp(parsedLine[0], "sw") == 0) // rt, offset(base) ****
+	else if(strcmp(parsedLine[0], "sw") == 0) // rt, offset, (base) 
 	{
 		printf("SW\n");
-		printf("Parts: %s | %s | %s | %s | \n" , parsedLine[0], parsedLine[1], parsedLine[2], parsedLine[3]);
+		// printf("Parts: %s | %s | %s | %s | \n" , parsedLine[0], parsedLine[1], parsedLine[2], parsedLine[3]);
+		// remove parenthesis
+		removeChar(parsedLine[2], '(');
+		removeChar(parsedLine[3], ')');
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | 0xAC000000;
 		// rt register
 		current = hash_table_search(parsedLine[1]);
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 16;
 		// immediate 
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (uint32_t)strtol(parsedLine[2], NULL, 0);
-		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
+		// base
+		current = hash_table_search(parsedLine[3]);
+		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 21;
 	}
 	else if(strcmp(parsedLine[0], "sb") == 0) // rt (base) , rs , offset ****
 	{
@@ -344,6 +369,12 @@ void handle_instruction(int line)
 		// offset 
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (uint32_t)strtol(parsedLine[2], NULL, 0);
 		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
+	}	
+	else if(strcmp(parsedLine[0], "bgt") == 0) // SPECIAL: rs, offset
+	{
+		printf("BGT \n");
+		printf("INVALID INSTRUCTION \n");
+		hexInfoCurrent.hexRep = 0xFFFFFFFF;
 	}
 	else if(strcmp(parsedLine[0], "bgtz") == 0) // SPECIAL: rs, offset
 	{
@@ -703,6 +734,10 @@ void handle_instruction(int line)
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (current->hexRegRepCurrent) << 21;
 	// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
+	else if(strcmp(parsedLine[0], "syscall") == 0)
+	{
+		hexInfoCurrent.hexRep = 0x0000000C;
+	}
 
 	/* Identify Instruction Type */
 	if((0xFC000000 & hexInfoCurrent.hexRep) >> 26 == 0)
@@ -711,14 +746,13 @@ void handle_instruction(int line)
 		hexInfoCurrent.instructionType = 'j';
 	else if((0xFC000000 & hexInfoCurrent.hexRep) >> 26 > 3)
 		hexInfoCurrent.instructionType = 'i';
-	printf("Instruction Type: %c \n", hexInfoCurrent.instructionType);
+	// printf("Instruction Type: %c \n", hexInfoCurrent.instructionType);
 
 	// handle J - type parsing
 	if(hexInfoCurrent.instructionType == 'j')
 	{
-		printf("%s \n", parsedLine[1]);
 		hexInfoCurrent.hexRep = hexInfoCurrent.hexRep | (uint32_t)strtol(parsedLine[1], NULL, 0);
-		printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
+		// printf("HexRep: 0x%08X \n", hexInfoCurrent.hexRep);
 	}
 
 	// store each hex representation into an array to be written to output file later
@@ -730,7 +764,10 @@ void handle_instruction(int line)
 
 int main(void)
 {
-	printf("| Assembly to Machine Code Generator | \n");
+	printf("| Assembly to Machine Code Generator| \n");
+	printf("| Set Program Length in 'mipsToHex.h' | \n");
+	// scanf("%d", &PROGRAM_LENGTH);
+	printf("| Input a .in or .txt file to be assembled, output will be written to terminal and 'output.txt' | \n");
 
 	printf("--- Handling Instructions ---\n");
 

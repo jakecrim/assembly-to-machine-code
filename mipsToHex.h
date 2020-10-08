@@ -2,6 +2,7 @@
 
 // *** SET PROGRAM LENGTH ***
 #define PROGRAM_LENGTH 43 
+// int PROGRAM_LENGTH;
 // *** SET PROGRAM LENGTH ***
 
 #define MAX_REG_NAME 4
@@ -20,7 +21,7 @@ typedef struct hexRegRep{
 typedef struct hexInfo{
 	uint32_t hexRep;
 	char instructionType;
-	uint32_t hexRepsArray[PROGRAM_LENGTH];
+	uint32_t hexRepsArray[PROGRAM_LENGTH + 1];
 
 }hexInfo;
 

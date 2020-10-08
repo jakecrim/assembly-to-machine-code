@@ -31,7 +31,7 @@ sub $t1,t1,t0
 j 0xFFF7
 lw $s1,0x0($a0)
 lw $s2,0x4($a0)
-bgt $s1,$s2,0x5
+bgtz $s1,$s2,0x5
 addi $a0,$a0,0x4
 subi $a1,$a1,0x1
 bgtz $a1,0xFFFB
