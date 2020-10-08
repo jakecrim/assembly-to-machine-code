@@ -1,6 +1,6 @@
 addi $a2,$zero,0x0
 addi $a3,$zero,0x5
-sw $a3,0x0($a2)
+sw $a3,0x0($a2
 addi $t3,$zero,0x3
 sw $t3,0x4($a2)
 addi $t4,$zero,0x6

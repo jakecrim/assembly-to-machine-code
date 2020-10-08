@@ -1,13 +1,11 @@
-#Jacob Attempt
-lui $a2, 0x10010000
+#Other Attempt
+li $a2, 0x10010000
 addi $a3,$zero,0x5
 sw $a3, 0x0($a2)
-
 
 addi $a2,$zero,0x0
 addi $a3,$zero,0x5
 sw $a3,0x10010000($a2)
-
 addi $t3,$zero,0x3
 sw $t3,0x10010004($a2)
 addi $t4,$zero,0x6
