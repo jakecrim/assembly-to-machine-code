@@ -5,22 +5,22 @@ syscall
 addi $t0,$zero,0x1
 beq $a0,$zero,0x3
 beq $a0,$t0,0x4
-jr 0x5
+j 0x5
 lui $v0,0x0
 jr $ra
 addi $v0,$zero,0x1
 jr $ra
-addi $a1,$zero,0x10 //load 16 into a1
-sub $sp,$sp,$a1 //16-stack pointer
+addi $a1,$zero,0x10
+sub $sp,$sp,$a1
 sw $ra,0($sp)
 sw $a0,4($sp)
-addi $a2,$zero,0x1 //load 1 into a2
-sub $a0,$a0,$a2 //decrement i
+addi $a2,$zero,0x1
+sub $a0,$a0,$a2
 jal 0xFFF2
 sw $v0,8($sp)
 lw $a0,4($sp)
-addi $a3,$zero,0x2 //load 2 into a3
-sub $s0,$s0,$a3 //decrement i twice
+addi $a3,$zero,0x2
+sub $s0,$s0,$a3
 jal 0xFFED
 sw $v0,12($sp)
 lw $ra,0($sp)
