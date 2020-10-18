@@ -9,6 +9,8 @@
 #define ROWS 11
 #define COLS 128
 
+#define T0 0x8
+
 char raw[100][100];
 
 
@@ -16,6 +18,7 @@ char raw[100][100];
 uint32_t hash(char * reg_name)
 {
 	int length = strnlen(reg_name, MAX_REG_NAME);
+	printf("Length: %d \n", length);
 	uint32_t hashVal = 0;
 	for(int i = 0; i < length; i++)
 	{
@@ -54,6 +57,7 @@ bool hash_table_insert(hexRegRep * current)
 hexRegRep * hash_table_search(char * current)
 {
 	int index = hash(current);
+	printf("Index: %d \n", index);
 	for(int i = 0; i < TABLE_SIZE; i++)
 	{
 		int attempt = (i + index) % TABLE_SIZE;
